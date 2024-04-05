@@ -1,6 +1,8 @@
 import numpy as np
 from edugrad.tensor import Tensor
 
+import torch
+
 
 #x_init_1 = np.random.randn(1,3) #float64
 #x_init_2 = np.random.randn(1,3).astype(np.float32) #float32
@@ -19,16 +21,30 @@ def checkFloat(number):
 
 #checkFloat(x_init_1[0][0])
 
-x_init = np.random.randn(1,3).astype(np.float32)
+def test_edugrad():
+    x_init = np.random.randn(1,3).astype(np.float32)
 
-print("value of x_init:", x_init)
-x = Tensor(x_init) 
-print("x value is:", x)
+    print("value of x_init:", x_init)
+    print("<<Processing Tensor(x_init)>>")
+    x = Tensor(x_init) 
+    print("x value is:", x)
 
-W_init = np.random.randn(3,3).astype(np.float32)
-W = Tensor(W_init)
-print("W value is:", W)
+    W_init = np.random.randn(3,3).astype(np.float32)
+    print("<<Processing Tensor(W_init)>>")
+    W = Tensor(W_init)
+    print("W value is:", W)
 
-out = x.dot(W)
-print("out value is:", out)
+    print("<<Processing x.dot(W)>>")
+    out = x.dot(W)
+    print("eduGrad out value is:", out)
 
+def test_pytorch():
+    x_init = np.random.randn(1,3).astype(np.float32)
+    x = torch.tensor(x_init, requires_grad=True)
+    W_init = np.random.randn(3,3).astype(np.float32)
+    W = torch.tensor(W_init, requires_grad=True)
+    out = x.matmul(W)
+    print("Pytorch out:", out)
+
+test_edugrad()
+test_pytorch()

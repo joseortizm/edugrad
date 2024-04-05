@@ -15,6 +15,7 @@ class Tensor:
 
 class Context:
     def __init__(self, arg, *tensors):
+        print("-Go to class Context->")
         self.arg = arg
         print("self.arg<->arg:", arg)
         self.parents = tensors
@@ -22,16 +23,20 @@ class Context:
         self.saved_tensors = []
     
     def save_for_backward(self, *x):
+        print("-Go to Context in save_for_backward->")
         self.saved_tensors.extend(x)
 
 
 class Function:
     def apply(self, arg, *x):
+        print("-Go to class Function->")
+        print("arg:", arg)
         ctx = Context(arg, self, *x)
         print("ctx:", ctx)
-        ret = Tensor(arg.forward(ctx, self.data, *[t.data for t in x]))
         print("x of Function:", x)
         print("self.data of Function:", self.data)
+        print("[t.data for t in x]",[t.data for t in x])   
+        ret = Tensor(arg.forward(ctx, self.data, *[t.data for t in x]))
         print("ret:", ret)
         ret._ctx = ctx
         return ret
@@ -42,6 +47,7 @@ def register(name, fxn):
 class Dot(Function):
     @staticmethod
     def forward(ctx, input, weight):
+      print("-Go to class Dot in forward->")
       ctx.save_for_backward(input, weight)
       print("input is", input)
       print("input.dot(",weight,") is :", input.dot(weight))
@@ -49,6 +55,7 @@ class Dot(Function):
    
     @staticmethod
     def backward(ctx, grad_output):
+      print("-Go to class Dot in backward->")
       input, weight = ctx.saved_tensors
       print("input:", input)
       print("weight:", weight)
