@@ -68,7 +68,6 @@ class Dot(Function):
         print("grad_input=", grad_input)
         print("grad_weight=", grad_weight)
         return grad_input, grad_weight
-
 register('dot', Dot)
 
 
@@ -90,7 +89,6 @@ class ReLU(Function):
         grad_input = grad_output.copy()
         grad_input[input < 0] = 0
         return grad_input
-
 register("relu", ReLU)
 
 
@@ -124,8 +122,29 @@ class LogSoftmax(Function):
 register('logsoftmax', LogSoftmax)
 
 
+class Mul(Function):
+    @staticmethod
+    def forward(ctx, x, y):
+        ctx.save_for_backward(x, y)
+        return x*y
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        x,y = ctx.saved_tensors
+        return y*grad_output, x*grad_output
+register('mul', Mul)
 
 
+class Sum(Function):
+    @staticmethod
+    def forward(ctx, input):
+        ctx.save_for_backward(input)
+        return np.array(input.sum())
+    @staticmethod
+    def backward(ctx, grad_output):
+        input, = ctx.saved_tensors
+        return grad_output * np.ones_like(input)
+register('sum', Sum)
 
 
 

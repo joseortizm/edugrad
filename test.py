@@ -23,7 +23,7 @@ def checkFloat(number):
 
 
 
-def test_edugrad(x_init, W_init):
+def test_edugrad(x_init, W_init, m_init):
     print()
     print("<<Processing Tensor(x_init)>>")
     x = Tensor(x_init) 
@@ -49,9 +49,20 @@ def test_edugrad(x_init, W_init):
     outl = outr.logsoftmax()
     print("eduGrad outl is:", outl)
 
-def test_pytorch(x_init, W_init):
+    print()
+    print("<<Processing outm.mul()>>")
+    m = Tensor(m_init)
+    outm = outl.mul(m)
+    print("eduGrad outm is:", outm)
+
+    print()
+    outx = outm.sum()
+    print("eduGrad outx is:", outx)
+
+def test_pytorch(x_init, W_init, m_init):
     x = torch.tensor(x_init, requires_grad=True)
     W = torch.tensor(W_init, requires_grad=True)
+    m = torch.tensor(m_init) 
 
     out = x.matmul(W)
     print("Pytorch out:", out)
@@ -62,13 +73,22 @@ def test_pytorch(x_init, W_init):
     outl = torch.nn.functional.log_softmax(outr, dim=1)
     print("Pytorch outl:", outl)
 
+    outm = outl.mul(m)
+    print("Pytorch outm:", outm)
+
+    outx = outm.sum()
+    print("Pytorch outx", outx)
+
 x_init = np.random.randn(1,3).astype(np.float32)
 print("value of x_init:", x_init)
 W_init = np.random.randn(3,3).astype(np.float32)
 print("value of W_init:", W_init)
+m_init = np.random.randn(1,3).astype(np.float32)
+print("value of m_init:", m_init)
+
 print()
 print("###Testing edugrad###")
-test_edugrad(x_init, W_init)
+test_edugrad(x_init, W_init, m_init)
 print("######################")
 print("###Testing Pytorch###")
-test_pytorch(x_init, W_init)
+test_pytorch(x_init, W_init, m_init)
