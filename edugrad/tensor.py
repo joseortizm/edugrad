@@ -13,6 +13,31 @@ class Tensor:
     def __str__(self):
         return f"Tensor {self.data} with grad {self.grad}"
 
+    def backward(self, allow_fill=True):
+        #print("running backward on", self)
+        if self._ctx is None:
+            return
+        if self.grad is None and allow_fill:
+            # fill in the first grad with one
+            assert self.data.size == 1
+            self.grad = np.ones_like(self.data)
+        assert(self.grad is not None)
+       
+        grads = self._ctx.arg.backward(self._ctx, self.grad)
+        if len(self._ctx.parents) == 1:
+            grads = [grads]
+        for t,g in zip(self._ctx.parents, grads):
+            if g.shape != t.data.shape:
+                print("grad shape must match tensor shape in %r, %r != %r" % (self._ctx.arg, g.shape, t.data.shape))
+                assert(False)
+            t.grad = g
+            t.backward(False)
+
+def mean(self):
+    div = Tensor(np.array([1/self.data.size]))
+    return self.sum().mul(div)
+
+
 class Context:
     def __init__(self, arg, *tensors):
         print()
@@ -50,7 +75,7 @@ class Dot(Function):
     @staticmethod
     def forward(ctx, input, weight):
         print()
-        print("***Go to class Dot in forward***")
+        print(">>>Go to class Dot in forward>>>")
         ctx.save_for_backward(input, weight)
         print("input is = ", input)
         print("input.dot(",weight,") is = ", input.dot(weight))
@@ -59,14 +84,14 @@ class Dot(Function):
     @staticmethod
     def backward(ctx, grad_output):
         print() 
-        print("***Go to class Dot in backward**")
+        print("<<<Go to class Dot in backward<<<")
         input, weight = ctx.saved_tensors
         print("input=", input)
         print("weight=", weight)
         grad_input = grad_output.dot(weight.T)
         grad_weight = grad_output.T.dot(input).T
-        print("grad_input=", grad_input)
-        print("grad_weight=", grad_weight)
+        print("return: grad_input=", grad_input)
+        print("return: grad_weight=", grad_weight)
         return grad_input, grad_weight
 register('dot', Dot)
 
@@ -75,7 +100,7 @@ class ReLU(Function):
     @staticmethod
     def forward(ctx, input):
         print() 
-        print("***Go to class ReLU in forward***")
+        print(">>>Go to class ReLU in forward>>>")
         print("input=", input) 
         ctx.save_for_backward(input)
         print("np.maximun(input, 0:)=", np.maximum(input, 0))
@@ -84,10 +109,11 @@ class ReLU(Function):
     @staticmethod
     def backward(ctx, grad_output):
         print() 
-        print("***Go to class ReLU backward***")
+        print("<<<Go to class ReLU backward<<<")
         input, = ctx.saved_tensors
         grad_input = grad_output.copy()
         grad_input[input < 0] = 0
+        print("return:", grad_input)
         return grad_input
 register("relu", ReLU)
 
@@ -96,7 +122,7 @@ class LogSoftmax(Function):
     @staticmethod
     def forward(ctx, input):
         print() 
-        print("***Go to class LogSoftmax in forward***")
+        print(">>>Go to class LogSoftmax in forward>>>")
         print("ctx=", ctx)
         print("input=", input)
         def logsumexp(x):
@@ -116,8 +142,9 @@ class LogSoftmax(Function):
     @staticmethod
     def backward(ctx, grad_output):
         print() 
-        print("***Go to brackward in class LogSoftmax***")
+        print("<<<Go to brackward in class LogSoftmax<<<")
         output, = ctx.saved_tensors
+        print("return:", grad_output - np.exp(output)*grad_output.sum(axis=1).reshape((-1, 1)))
         return grad_output - np.exp(output)*grad_output.sum(axis=1).reshape((-1, 1))
 register('logsoftmax', LogSoftmax)
 
@@ -125,12 +152,21 @@ register('logsoftmax', LogSoftmax)
 class Mul(Function):
     @staticmethod
     def forward(ctx, x, y):
+        print() 
+        print(">>>Go to forward in class Mul>>>")
         ctx.save_for_backward(x, y)
         return x*y
 
     @staticmethod
     def backward(ctx, grad_output):
+        print() 
+        print("<<<Go to backward in class Mul<<<")
+        print("grad_output:", grad_output)
         x,y = ctx.saved_tensors
+        print("x of ctc.saved_tensor:", x)
+        print("y of ctc.saved_tensor:", y)
+        print("return:", y*grad_output)
+        print("return:", x*grad_output)
         return y*grad_output, x*grad_output
 register('mul', Mul)
 
@@ -138,11 +174,19 @@ register('mul', Mul)
 class Sum(Function):
     @staticmethod
     def forward(ctx, input):
+        print() 
+        print(">>>Go to forward in class Sum>>>")
         ctx.save_for_backward(input)
-        return np.array(input.sum())
+        return np.array([input.sum()])
     @staticmethod
     def backward(ctx, grad_output):
+        print() 
+        print("<<<Go to backward in class Sum<<<")
+        print("grad_output:", grad_output)
         input, = ctx.saved_tensors
+        print("input of ctx.save_for_backward:", input) 
+        print("np.ones_like(input)", np.ones_like(input))
+        print("return: ", grad_output * np.ones_like(input))
         return grad_output * np.ones_like(input)
 register('sum', Sum)
 

@@ -59,6 +59,18 @@ def test_edugrad(x_init, W_init, m_init):
     outx = outm.sum()
     print("eduGrad outx is:", outx)
 
+    outx.backward()
+    
+    print("$$$return eduGrad$$$")
+    print("outx.data")
+    print(outx.data)
+    print("x.grad")
+    print(x.grad) 
+    print("W.grad")
+    print(W.grad) 
+    return outx.data, x.grad, W.grad
+
+
 def test_pytorch(x_init, W_init, m_init):
     x = torch.tensor(x_init, requires_grad=True)
     W = torch.tensor(W_init, requires_grad=True)
@@ -77,7 +89,18 @@ def test_pytorch(x_init, W_init, m_init):
     print("Pytorch outm:", outm)
 
     outx = outm.sum()
-    print("Pytorch outx", outx)
+    print("Pytorch outx:", outx)
+
+    outx.backward()
+
+    print("$$$return Pytorch$$$")
+    print("outx.detach().numpy():")
+    print(outx.detach().numpy())
+    print("x.grad:")
+    print(x.grad) 
+    print("W.grad:")
+    print(W.grad)
+    return outx.detach().numpy(), x.grad, W.grad
 
 x_init = np.random.randn(1,3).astype(np.float32)
 print("value of x_init:", x_init)
@@ -92,3 +115,15 @@ test_edugrad(x_init, W_init, m_init)
 print("######################")
 print("###Testing Pytorch###")
 test_pytorch(x_init, W_init, m_init)
+
+print("######################")
+print("testing...")
+for x,y in zip(test_edugrad(x_init, W_init, m_init), test_pytorch(x_init, W_init, m_init)):
+    print("x:")
+    print(x)
+    print("y:")
+    print(y)
+    print("np.testing.assert_allclose(x, y, atol=1e-6):")
+    np.testing.assert_allclose(x, y, atol=1e-6)
+
+
