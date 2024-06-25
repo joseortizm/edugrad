@@ -42,12 +42,22 @@ print("t4_edugrad:", t4_edugrad)
 t4_pytorch = torch.tensor(t4_init)
 print("t4_pytorch:", t4_pytorch)
 
-edugrad_test_tensor(t4_edugrad)
-edugrad_test_funcActivation(t4_edugrad)
-pytorch_test_funcActivation(t4_pytorch)
+#edugrad_test_tensor(t4_edugrad)
+#edugrad_test_funcActivation(t4_edugrad)
+#pytorch_test_funcActivation(t4_pytorch)
 
 
 
+#X = Tensor([[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]], requires_grad=True)
+x = Tensor([[-1.06876432,  1.26828575,  0.67594512], [-1.97010719,  1.5216349,  -0.58012214], [ 0.70961096, -1.73099819, -0.09753269], [-1.07286343,  2.15543405,  0.44647809]])
+print(x)
+linear = nn.Linear(3, 2)
+print(linear)
+output_linear = linear(x)
+print(output_linear)
+
+#sigmoid = nn.Sigmoid()
+#output_sigmoid = sigmoid()
 
 
 

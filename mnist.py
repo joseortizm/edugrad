@@ -2,6 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 
+import edugrad.nn as nn 
+from edugrad.tensor import Tensor
+
 def read_images(file_path):
     with open(file_path, 'rb') as f:
         # Leer el encabezado del archivo (los primeros 16 bytes)
@@ -40,12 +43,15 @@ y_test = read_labels(test_labels_path)
 #print(X_train[1])
 #print("len(X_train[1]):", len(X_train[1])) #784 = 28*28
 #print("X_train[1].shape:", X_train[1].shape) #(784,)
+#print("X_train.shape:", X_train.shape) #(60000, 784)
 #print("len(X_train):", len(X_train)) #60000
-#print("type(X_train):", type(X_train))
-#print("X_train.dtype:", X_train.dtype)
+#print("type(X_train):", type(X_train)) #numpy.ndarray
+#print("X_train.dtype:", X_train.dtype) #uint8
 #print("len(y_train):", len(y_train)) #60000
 #print("len(X_test):", len(X_test)) #10000
 #print("len(y_test):", len(y_test)) #10000
+
+
 
 ###Graficar un digito###
 ###
@@ -62,13 +68,32 @@ def plot_number(image):
 #print(y_train[randomIndex])
 ###
 
+###Convertir tipo uint8 a float32
+###
+#x_train = X_train.reshape(60000, -1).astype(np.float32)
+#print("type(x_train):", type(x_train)) #numpy.ndarray
+#print("x_train.dtype:", x_train.dtype) #float32
+#print("x_train.shape:", x_train.shape) #(60000, 784)
+#print("x_train[1]:")
+#print(x_train[1])
+#print(x_train[1].shape) #(784,)
+###
 
 
+x_train = X_train.reshape(60000, -1).astype(np.float32)
+x = x_train[1]/255
+x = Tensor(x)
+linear = nn.Linear(784, 64)
+print(linear) #<edugrad.nn.Linear object at 0x1014fbc70> :se podria modificar esta respuesta?
+output_linear = linear(x)
+print(output_linear) 
+print(output_linear.shape()) #64
 
+sigmoid = nn.Sigmoid()
+print(sigmoid(output_linear))
 
-
-
-
+relu = nn.ReLU()
+print(relu(output_linear))
 
 
 
