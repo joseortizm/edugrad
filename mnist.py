@@ -84,7 +84,7 @@ x_train = X_train.reshape(60000, -1).astype(np.float32)
 x = x_train[1]/255
 x = Tensor(x)
 linear = nn.Linear(784, 64)
-print(linear) #<edugrad.nn.Linear object at 0x1014fbc70> :se podria modificar esta respuesta?
+print(linear) 
 output_linear = linear(x)
 print(output_linear) 
 print(output_linear.shape()) #64
