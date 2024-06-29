@@ -83,20 +83,50 @@ def plot_number(image):
 x_train = X_train.reshape(60000, -1).astype(np.float32)
 x = x_train[1]/255
 x = Tensor(x)
+#print("x")
+#print(x)
+
 linear = nn.Linear(784, 64)
 print(linear) 
 output_linear = linear(x)
+print("output_linear:")
 print(output_linear) 
 print(output_linear.shape()) #64
 
-sigmoid = nn.Sigmoid()
-print(sigmoid(output_linear))
+#sigmoid = nn.Sigmoid()
+#print("Sigmoid:")
+#print(sigmoid(output_linear))
+#
+#relu = nn.ReLU()
+#print("ReLU eduGrad:")
+#print(relu(output_linear))
 
-relu = nn.ReLU()
-print(relu(output_linear))
+
+####
+print("Pytorch:")
+import torch
+xT = x_train[1]/255
+xT = torch.tensor(xT)
+#print("xT")
+#print(xT)
+
+linearT = torch.nn.Linear(784, 64)
+print(linearT) 
+output_linearT = linearT(xT)
+print("output_linearT:")
+print(output_linearT) 
+print(output_linearT.shape) 
+
+#sigmoidT = torch.nn.Sigmoid()
+#print("SigmoidT:")
+#print(sigmoidT(output_linearT))
+#
+#reluT = torch.nn.ReLU()
+#print("ReLU Pytorch:")
+#print(reluT(output_linearT))
 
 
-
+####
 
 
 

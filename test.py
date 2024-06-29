@@ -29,24 +29,6 @@ def pytorch_test_funcActivation(t):
     output_relu = torch.relu(t) 
     print(output_relu)
 
-#t1 = Tensor([[1, 2, 3], [4, 5, 6]])
-#t2 = Tensor([-1.0, 0.5, 2.0])
-##t3 = np.array([-2.0, -1.0, 0.0, 1.0, 2.0])
-
-#t4_init = np.random.randn(1,3).astype(np.float32)
-#print("t4_init:", t4_init)
-#
-#t4_edugrad = Tensor(t4_init)
-#print("t4_edugrad:", t4_edugrad)
-#
-#t4_pytorch = torch.tensor(t4_init)
-#print("t4_pytorch:", t4_pytorch)
-
-#edugrad_test_tensor(t4_edugrad)
-#edugrad_test_funcActivation(t4_edugrad)
-#pytorch_test_funcActivation(t4_pytorch)
-
-
 def test_nn():
     #print("Edugrad:")
     x = Tensor([[-1.06876432,  1.26828575,  0.67594512], [-1.97010719,  1.5216349,  -0.58012214], [ 0.70961096, -1.73099819, -0.09753269], [-1.07286343,  2.15543405,  0.44647809]])
@@ -61,7 +43,7 @@ def test_nn():
     #print("output_sigmoid:", output_sigmoid)
 
     relu = nn.ReLU()
-    output_relu = relu(x)
+    output_relu = relu(output_linear)
     #print("output_relu:", output_relu)
 
     #print("Pytorch:")
@@ -77,13 +59,13 @@ def test_nn():
     #print("output_sigmoid_torch:", output_sigmoid_torch)
 
     relu_torch = torch.nn.ReLU()
-    output_relu_torch = relu_torch(x_)
+    output_relu_torch = relu_torch(output_linear_torch)
     #print("output_relu_torch:", output_relu_torch)
 
     print("x:", x) 
     print("x_:", x_) 
-    print("linear:", linear)
-    print("linear_torch:", linear_torch)
+    print("output_linear:", output_linear)
+    print("output_linear_torch:", output_linear_torch)
     print("sigmoid:",sigmoid)
     print("sigmoid_torch:",sigmoid_torch)
     print("output_sigmoid:", output_sigmoid)
@@ -91,9 +73,35 @@ def test_nn():
     print("output_relu:", output_relu)
     print("output_relu_torch:", output_relu_torch)
 
-test_nn()
+#test_nn()
+
+def linear1():
+    input_data = np.random.randn(128, 20)
+    input_tensor = Tensor(input_data)
+    linear_layer = nn.Linear(20, 10)
+    print("linear_layer:", linear_layer)
+    output_tensor = linear_layer(input_tensor)
+    print(output_tensor)
+    print(output_tensor.shape())
+
+    input_torch = torch.randn(128, 20)
+    linear_torch = torch.nn.Linear(20,10)
+    pesos = linear_torch.state_dict()
+    output_torch = linear_torch(input_torch)
+    print(output_torch)
+    print(output_torch.shape)
+
+    print("Pesos Edu:")
+    print(linear_layer.weights.shape())
+    print(linear_layer.weights)
+    print(linear_layer.bias.shape())
+    print(linear_layer.bias)
+    print("Pesos Torch:")
+    print("linear_torch['weight'].shape:", pesos['weight'].shape)
+    print(pesos['weight']) 
+    print("linear_torch['bias'].shape:", pesos['bias'].shape)
+    print(pesos['bias'])  
 
 
 
-
-
+linear1()

@@ -25,28 +25,24 @@ class ReLU:
 
 class Linear:
     def __init__(self, in_features, out_features, bias=True):
+        """
+        Inicialización de weights con Xavier/Glorot
+        """
         self.in_features = in_features
         self.out_features = out_features
-        self.status_bias = bias 
-        # Inicializar los pesos y los sesgos
-        self.weights = Tensor(np.random.randn(in_features, out_features) * np.sqrt(2. / in_features), requires_grad=True)
-        if bias:
-            self.bias = Tensor(np.zeros(out_features), requires_grad=True)
-        else:
-            self.bias = None
-
-    def __call__(self, x): 
-       """
-        Realiza la operación hacia adelante: y = xW + b
-        x: entrada de tamaño (batch_size, in_features)
-        return: salida de tamaño (batch_size, out_features)
+        self.status_bias = bias
+        limit = np.sqrt(6 / (in_features + out_features))
+        self.weights = Tensor(np.random.uniform(-limit, limit, (out_features, in_features)), requires_grad=True)
+        self.bias = Tensor(np.zeros(out_features), requires_grad=True)
+    def forward(self, x):
         """
-        return x @ self.weights + (self.bias if self.bias is not None else 0)
+        Realiza la operación hacia adelante: y = xW + b
+        todo: proceso en __init__ y forward si bias=False
+        """
+        return Tensor(x.data @ self.weights.data.T + self.bias.data, requires_grad=True)
+
+    def __call__(self, x):
+        return self.forward(x)
 
     def __repr__(self):
         return f"Linear(in_features={self.in_features}, out_features={self.out_features}, bias={self.status_bias})"
-
-
-
-
-
