@@ -39,6 +39,7 @@ y_train = read_labels(train_labels_path)
 X_test = read_images(test_images_path)
 y_test = read_labels(test_labels_path)
 
+###Check imagenes###
 #print("X_train[1]:")
 #print(X_train[1])
 #print("len(X_train[1]):", len(X_train[1])) #784 = 28*28
@@ -50,7 +51,7 @@ y_test = read_labels(test_labels_path)
 #print("len(y_train):", len(y_train)) #60000
 #print("len(X_test):", len(X_test)) #10000
 #print("len(y_test):", len(y_test)) #10000
-
+###
 
 
 ###Graficar un digito###
@@ -68,7 +69,7 @@ def plot_number(image):
 #print(y_train[randomIndex])
 ###
 
-###Convertir tipo uint8 a float32
+###Convertir tipo uint8 a float32###
 ###
 #x_train = X_train.reshape(60000, -1).astype(np.float32)
 #print("type(x_train):", type(x_train)) #numpy.ndarray
@@ -80,57 +81,75 @@ def plot_number(image):
 ###
 
 
+###Ejemplos de funciones linear, relu, sigmoid###
+def exam_func():
+  x_train = X_train.reshape(60000, -1).astype(np.float32)
+  x = x_train[1]/255
+  x = Tensor(x)
+  #print("x")
+  #print(x)
+
+  linear = nn.Linear(784, 64)
+  print(linear) 
+  output_linear = linear(x)
+  print("output_linear:")
+  print(output_linear) 
+  print(output_linear.shape()) #64
+
+  #sigmoid = nn.Sigmoid()
+  #print("Sigmoid:")
+  #print(sigmoid(output_linear))
+  #
+  #relu = nn.ReLU()
+  #print("ReLU eduGrad:")
+  #print(relu(output_linear))
+  print("Pytorch:")
+  import torch
+  xT = x_train[1]/255
+  xT = torch.tensor(xT)
+  #print("xT")
+  #print(xT)
+
+  linearT = torch.nn.Linear(784, 64)
+  print(linearT) 
+  output_linearT = linearT(xT)
+  print("output_linearT:")
+  print(output_linearT) 
+  print(output_linearT.shape) 
+
+  #sigmoidT = torch.nn.Sigmoid()
+  #print("SigmoidT:")
+  #print(sigmoidT(output_linearT))
+  #
+  #reluT = torch.nn.ReLU()
+  #print("ReLU Pytorch:")
+  #print(reluT(output_linearT))
+
+#exam_func()
+###
+
 x_train = X_train.reshape(60000, -1).astype(np.float32)
 x = x_train[1]/255
 x = Tensor(x)
-#print("x")
 #print(x)
 
-linear = nn.Linear(784, 64)
-print(linear) 
-output_linear = linear(x)
-print("output_linear:")
-print(output_linear) 
-print(output_linear.shape()) #64
+class Net():
+  def __init__(self):
+    self.fc1 = nn.Linear(28*28, 512)
+    self.fc2 = nn.Linear(512, 10)  
 
-#sigmoid = nn.Sigmoid()
-#print("Sigmoid:")
-#print(sigmoid(output_linear))
-#
-#relu = nn.ReLU()
-#print("ReLU eduGrad:")
-#print(relu(output_linear))
+  def forward(self, x):
+    relu1 = nn.ReLU()
+    x = relu1(self.fc1(x))
+    x = self.fc2(x)
+    return x
+    
+model = Net()
+output = model.forward(x)
+print(output)
 
-
-####
-print("Pytorch:")
-import torch
-xT = x_train[1]/255
-xT = torch.tensor(xT)
-#print("xT")
-#print(xT)
-
-linearT = torch.nn.Linear(784, 64)
-print(linearT) 
-output_linearT = linearT(xT)
-print("output_linearT:")
-print(output_linearT) 
-print(output_linearT.shape) 
-
-#sigmoidT = torch.nn.Sigmoid()
-#print("SigmoidT:")
-#print(sigmoidT(output_linearT))
-#
-#reluT = torch.nn.ReLU()
-#print("ReLU Pytorch:")
-#print(reluT(output_linearT))
-
-
-####
-
-
-
-
-
+#soft = nn.Softmax()
+#pred_probab = soft(output)
+#print(pred_probab)
 
 

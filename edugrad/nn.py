@@ -23,6 +23,37 @@ class ReLU:
     def __repr__(self):
         return "ReLU()"
 
+class Softmax:
+    """
+    input: 
+     Variable Tensor o Tensor.data, np.array([...])
+    """
+    def forward(self, x):
+        exps = np.exp(x.data - np.max(x.data))
+        equation = exps/np.sum(exps)
+        return Tensor(equation)
+
+    def __call__(self, x):
+        return self.forward(x)
+
+    def __repr__(self):
+        return "Softmax()"
+
+class CrossEntropyLoss:
+    def forward(self, input, target):
+        return (input, target)
+    
+    def __call__(self, x):
+        return self.forward(x)
+    
+    def __repr__(self):
+        return("CrossEntropyLoss()")
+
+
+
+
+
+
 class Linear:
     def __init__(self, in_features, out_features, bias=True):
         """
@@ -46,3 +77,4 @@ class Linear:
 
     def __repr__(self):
         return f"Linear(in_features={self.in_features}, out_features={self.out_features}, bias={self.status_bias})"
+#
