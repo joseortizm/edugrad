@@ -104,4 +104,35 @@ def linear1():
 
 
 
-linear1()
+#linear1()
+
+from sklearn.datasets import make_regression
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt 
+import numpy as np 
+
+
+def test_net():
+
+    x, y = make_regression(n_samples=100, n_features=1, noise=10, random_state=0)
+    
+    x = np.interp(x, (x.min(), x.max()), (10, 20))
+    y = np.interp(y, (y.min(), y.max()), (5, 15))
+    
+    #plt.plot(x, y, '.')
+    #plt.xlabel('Years of experience')
+    #plt.ylabel('Salary per month ($k)')
+    #plt.title('The relationship between experience & salary')
+    #plt.show()
+
+    xTrain, xTest, yTrain, yTest = train_test_split(x, y, test_size=0.3, random_state=0)    
+    
+    #samples = 12
+    #features = 10
+    #input_data = np.random.randn(samples,features)
+    ##print(input_data)
+    #output_linear = nn.Linear()
+    model = nn.Linear(1, 1)
+
+
+test_net()

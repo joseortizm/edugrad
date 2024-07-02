@@ -129,9 +129,10 @@ def exam_func():
 ###
 
 x_train = X_train.reshape(60000, -1).astype(np.float32)
-x = x_train[1]/255
+x = x_train[0]/255
 x = Tensor(x)
-#print(x)
+print(x)
+print(x.shape())
 
 class Net():
   def __init__(self):
@@ -141,15 +142,17 @@ class Net():
   def forward(self, x):
     relu1 = nn.ReLU()
     x = relu1(self.fc1(x))
+    print("otro:", x)
     x = self.fc2(x)
+    print("otro:", x.data)
     return x
     
 model = Net()
 output = model.forward(x)
 print(output)
 
-#soft = nn.Softmax()
-#pred_probab = soft(output)
-#print(pred_probab)
+soft = nn.Softmax()
+pred_probab = soft(output)
+print(pred_probab.shape())
 
 
