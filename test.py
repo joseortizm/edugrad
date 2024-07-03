@@ -126,13 +126,21 @@ def test_net():
     #plt.show()
 
     xTrain, xTest, yTrain, yTest = train_test_split(x, y, test_size=0.3, random_state=0)    
-    
-    #samples = 12
-    #features = 10
-    #input_data = np.random.randn(samples,features)
-    ##print(input_data)
-    #output_linear = nn.Linear()
-    model = nn.Linear(1, 1)
+    inputs = Tensor(xTrain)
+    labels = Tensor(yTrain)
+    class Net():
+      def __init__(self):
+        self.fc1 = nn.Linear(1, 1)
+      def forward(self, x):
+        out = self.fc1(x)
+        return out
+
+    model = Net()
+    outputs = model.forward(inputs)
+    criterion = nn.MSELoss()
+    loss = criterion(outputs, labels)
+    print(loss)
+
 
 
 test_net()

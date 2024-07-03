@@ -35,6 +35,25 @@ class Tensor:
         else:
             return Tensor(self.data * other, requires_grad=self.requires_grad)
 
+    def __sub__(self, other):
+        if isinstance(other, Tensor):
+            return Tensor(self.data - other.data, requires_grad=self.requires_grad or other.requires_grad)
+        else:
+            return Tensor(self.data - other, requires_grad=self.requires_grad)
+
+    def __pow__(self, other):
+        if isinstance(other, Tensor):
+            return Tensor(self.data ** other.data, requires_grad=self.requires_grad or other.requires_grad)
+        else:
+            return Tensor(self.data ** other, requires_grad=self.requires_grad)
+
+
+    def __truediv__(self, other):
+        if isinstance(other, Tensor):
+            return Tensor(self.data / other.data, requires_grad=self.requires_grad or other.requires_grad)
+        else:
+            return Tensor(self.data / other, requires_grad=self.requires_grad)
+
     def __repr__(self):
         return f"Tensor(data={self.data}, requires_grad={self.requires_grad})"
 
@@ -43,3 +62,9 @@ class Tensor:
         Retorna la forma (shape) del Tensor.
         """
         return self.data.shape
+
+    def size(self):
+        """
+        Retorna la cantidad de elementos del Tensor.
+        """
+        return self.data.size

@@ -43,11 +43,23 @@ class CrossEntropyLoss:
     def forward(self, input, target):
         return (input, target)
     
-    def __call__(self, x):
-        return self.forward(x)
+    def __call__(self, input, target):
+        return self.forward(input, target)
     
     def __repr__(self):
         return("CrossEntropyLoss()")
+
+class MSELoss():
+    def forward(self, y_pred, y_true):
+        n = y_true.size()
+        output = np.sum((y_pred - y_true)**2)/n
+        return output 
+    
+    def __call__(self, y_pred, y_true):
+        return self.forward(y_pred, y_true)
+    
+    def __repr__(self):
+        return("MSELoss()")
 
 
 
