@@ -127,7 +127,9 @@ def test_net():
 
     xTrain, xTest, yTrain, yTest = train_test_split(x, y, test_size=0.3, random_state=0)    
     inputs = Tensor(xTrain)
-    labels = Tensor(yTrain)
+    #print(inputs.shape()) #(70,1)
+    labels = Tensor(yTrain) #(70,)
+    #print(labels.shape())
     class Net():
       def __init__(self):
         self.fc1 = nn.Linear(1, 1)
@@ -139,8 +141,8 @@ def test_net():
     outputs = model.forward(inputs)
     criterion = nn.MSELoss()
     loss = criterion(outputs, labels)
-    print(loss)
-
+    print(loss.shape())
+    #todo: comparar con Pytorch
 
 
 test_net()
