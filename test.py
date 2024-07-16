@@ -111,10 +111,32 @@ from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt 
 import numpy as np 
 
+#probando loss con ejemplo de colab V2
+#https://colab.research.google.com/drive/1ytE224UL2HjAnn_D-Alw7QWFm-jI0r-M?authuser=2#scrollTo=e_O8YdmyOg-S
+def test_loss():
+    x, y = make_regression(n_samples=100, n_features=1, noise=10, random_state=0)
+    x = np.interp(x, (x.min(), x.max()), (10, 20))
+    y = np.interp(y, (y.min(), y.max()), (5, 15))
+    xTrain, xTest, yTrain, yTest = train_test_split(x, y, test_size=0.3, random_state=0)    
+    inputs = Tensor(xTrain)
+    #print(inputs.shape()) #(70,1)
+    labels = Tensor(yTrain) #(70,) 
+    criterion = nn.MSELoss()
+    loss = criterion(inputs, labels)
+    outputBackwardLoss = loss.backward()
+    #print(inputs.data)
+    print(inputs.grad)
 
+#test_loss() 
+
+
+
+
+
+#v3
 def test_net():
 
-    x, y = make_regression(n_samples=100, n_features=1, noise=10, random_state=0)
+    x, y = make_regression(n_samples=10, n_features=1, noise=10, random_state=0)
     
     x = np.interp(x, (x.min(), x.max()), (10, 20))
     y = np.interp(y, (y.min(), y.max()), (5, 15))
@@ -138,11 +160,22 @@ def test_net():
         return out
 
     model = Net()
+    print(inputs.shape())
+    print(inputs)
     outputs = model.forward(inputs)
+    print(outputs.shape())
+    print(outputs)
     criterion = nn.MSELoss()
     loss = criterion(outputs, labels)
     print(loss.shape())
+    print(loss)
     #todo: comparar con Pytorch
+    n = labels.size()
+    ot = np.sum((outputs - labels)**2)/n
+    print(ot.shape())
+    print(ot)
+    print(outputs-labels) #TODO
+
 
 
 test_net()

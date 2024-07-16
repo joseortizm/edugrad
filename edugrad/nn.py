@@ -60,8 +60,27 @@ class MSELoss():
     
     def __repr__(self):
         return("MSELoss()")
-
-
+       
+    #def backward(self):
+    #    """
+    #    Calcula el gradiente de la pérdida MSE con respecto a y_pred.
+    #    
+    #    Returns:
+    #    - gradient (torch.Tensor): Gradiente de la pérdida con respecto a y_pred.
+    #    """
+    #    num_samples = self.y_pred.size(0)
+    #    gradient = (2 / num_samples) * (self.y_pred - self.y_true)
+    #    return gradient
+    def backward(self):
+        """
+        Calcula el gradiente de la pérdida MSE con respecto a y_pred.
+        
+        Returns:
+        - gradient (Tensor): Gradiente de la pérdida con respecto a y_pred.
+        """
+        num_samples = self.y_pred.data.shape[0]
+        gradient = (2 / num_samples) * (self.y_pred - self.y_true)
+        return gradient
 
 
 

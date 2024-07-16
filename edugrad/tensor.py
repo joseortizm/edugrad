@@ -6,9 +6,17 @@ class Tensor:
         self.data = np.array(data, dtype=np.float32)
         self.requires_grad = requires_grad
         self.grad = None
+        self._grad_fn = None
 
         if requires_grad:
             self.grad = np.zeros_like(self.data)
+
+    def backward(self, gradient=None):
+        if self.requires_grad and self._grad_fn:
+            if gradient is None:
+                gradient = np.ones_like(self.data)
+            self.grad = gradient
+            self._grad_fn.backward(gradient)
 
     #def backward(self, grad=None):
     #    if not self.requires_grad:
