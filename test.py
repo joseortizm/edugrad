@@ -1,9 +1,10 @@
-import numpy as np
+###W
+#import numpy as np
 
 from edugrad.tensor import Tensor
 import edugrad.nn as nn 
 
-import torch
+#import torch
 
 
 
@@ -106,9 +107,10 @@ def linear1():
 
 #linear1()
 
+##W
 from sklearn.datasets import make_regression
 from sklearn.model_selection import train_test_split
-import matplotlib.pyplot as plt 
+#import matplotlib.pyplot as plt 
 import numpy as np 
 
 #probando loss con ejemplo de colab V2
@@ -161,20 +163,28 @@ def test_net():
 
     model = Net()
     print(inputs.shape())
+    #print(inputs.size())
     print(inputs)
     outputs = model.forward(inputs)
     print(outputs.shape())
     print(outputs)
     criterion = nn.MSELoss()
+    outputs = outputs.flatten() 
+    labels = labels.flatten()
+    print("data:")
+    print(np.size(outputs))
+    print(labels)
+    print("Fin data")
     loss = criterion(outputs, labels)
-    print(loss.shape())
+    #print(loss.shape())
     print(loss)
     #todo: comparar con Pytorch
-    n = labels.size()
+    #n = labels.size()
+    n = np.size(labels.size)
     ot = np.sum((outputs - labels)**2)/n
-    print(ot.shape())
+    #print(ot.shape())
     print(ot)
-    print(outputs-labels) #TODO
+    print(outputs-labels) 
 
 
 

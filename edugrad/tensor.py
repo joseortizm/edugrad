@@ -75,4 +75,10 @@ class Tensor:
         """
         Retorna la cantidad de elementos del Tensor.
         """
-        return self.data.size
+        #return self.data.size
+        return np.size(self.data)
+
+    def flatten(self):
+        return self.data.flatten()
+
+

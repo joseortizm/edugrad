@@ -51,7 +51,9 @@ class CrossEntropyLoss:
 
 class MSELoss():
     def forward(self, y_pred, y_true):
-        n = y_true.size()
+        #TODO: validar size y_pred vs y_true #https://pytorch.org/docs/stable/_modules/torch/nn/functional.html#mse_loss
+        #n = y_true.size()
+        n = np.size(y_true)
         output = np.sum((y_pred - y_true)**2)/n
         return output 
     
