@@ -111,3 +111,19 @@ class Linear:
     def __repr__(self):
         return f"Linear(in_features={self.in_features}, out_features={self.out_features}, bias={self.status_bias})"
 #
+
+
+#todo: https://pytorch.org/docs/stable/generated/torch.reshape.html
+class Reshape:
+    def __init__(self, start_dim=1, end_dim=-1):
+        self.start_dim = start_dim
+        self.end_dim = end_dim
+
+    def forward(self, x):
+        return x
+
+    def __call__(self, x):
+        return self.forward(x)
+
+
+

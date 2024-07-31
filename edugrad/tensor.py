@@ -79,6 +79,12 @@ class Tensor:
         return np.size(self.data)
 
     def flatten(self):
+        """
+        Convierte el Tensor en un vector unidimensional
+        Todo: verificar que no pierda sus caracteristicar de ser Tensor
+        """
         return self.data.flatten()
+
+
 
 

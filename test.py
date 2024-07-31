@@ -138,6 +138,7 @@ def test_loss():
 #v3
 def test_net():
 
+    #creacion de datos 
     x, y = make_regression(n_samples=10, n_features=1, noise=10, random_state=0)
     
     x = np.interp(x, (x.min(), x.max()), (10, 20))
@@ -151,9 +152,15 @@ def test_net():
 
     xTrain, xTest, yTrain, yTest = train_test_split(x, y, test_size=0.3, random_state=0)    
     inputs = Tensor(xTrain)
-    #print(inputs.shape()) #(70,1)
-    labels = Tensor(yTrain) #(70,)
-    #print(labels.shape())
+    print("inputs:") 
+    print(inputs.shape()) #(7,1)
+    print(inputs) 
+    print("labels:")
+    labels = Tensor(yTrain) 
+    print(labels.shape()) #(7,)
+    print(labels)
+
+    #modelo
     class Net():
       def __init__(self):
         self.fc1 = nn.Linear(1, 1)
@@ -162,30 +169,44 @@ def test_net():
         return out
 
     model = Net()
-    print(inputs.shape())
-    #print(inputs.size())
+
+    #entradas y salidas del modelo
+    #print(inputs.size()) #7
+    print("inputs:")
     print(inputs)
-    outputs = model.forward(inputs)
-    print(outputs.shape())
+    outputs = model.forward(inputs) 
+    print("outputs:")
+    print(outputs.shape()) #(7,1)
     print(outputs)
+
+    #MSELoss
+    print("==MESLoss==") 
     criterion = nn.MSELoss()
     outputs = outputs.flatten() 
+    #outputs = outputs.reshape(7,1) #todo 
     labels = labels.flatten()
-    print("data:")
-    print(np.size(outputs))
+    #labels = labels.reshape(7,1) #todo
+    #print(np.size(outputs)) #7
+    print("outputs with flatten():")
+    print(outputs)
+    print("labels with flatten():")
     print(labels)
-    print("Fin data")
+    print("loss:")
     loss = criterion(outputs, labels)
     #print(loss.shape())
+    print("MESLoss:")
     print(loss)
-    #todo: comparar con Pytorch
-    #n = labels.size()
-    n = np.size(labels.size)
+   
+    print("==without Class MSELoss==")    
+    #n1 = labels.size() #TypeError: 'int' object is not callable
+    n = np.size(labels)
+    print("n:", n)
     ot = np.sum((outputs - labels)**2)/n
     #print(ot.shape())
-    print(ot)
+    print("loss:", ot)
+    print("outputs-labels:") 
     print(outputs-labels) 
 
-
+    #todo: comparar con Pytorch
 
 test_net()
