@@ -182,7 +182,7 @@ def test_net():
     #MSELoss
     print("==MESLoss==") 
     criterion = nn.MSELoss()
-    outputs = outputs.flatten() 
+    outputs = outputs.flatten()
     #outputs = outputs.reshape(7,1) #todo 
     labels = labels.flatten()
     #labels = labels.reshape(7,1) #todo
@@ -195,7 +195,7 @@ def test_net():
     loss = criterion(outputs, labels)
     #print(loss.shape())
     print("MESLoss:")
-    print(loss)
+    print(loss) #TODO: Value()?
    
     print("==without Class MSELoss==")    
     #n1 = labels.size() #TypeError: 'int' object is not callable

@@ -1,5 +1,4 @@
 import numpy as np
-import numpy as np
 
 class Tensor:
     def __init__(self, data, requires_grad=False):
@@ -85,6 +84,7 @@ class Tensor:
         """
         return self.data.flatten()
 
-
+    #def reshape(self):
+    #    return self.data
 
 

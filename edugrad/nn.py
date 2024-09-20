@@ -114,6 +114,7 @@ class Linear:
 
 
 #todo: https://pytorch.org/docs/stable/generated/torch.reshape.html
+#definir si sera class or function in tensor.py
 class Reshape:
     def __init__(self, start_dim=1, end_dim=-1):
         self.start_dim = start_dim
@@ -124,6 +125,4 @@ class Reshape:
 
     def __call__(self, x):
         return self.forward(x)
-
-
 
