@@ -1,212 +1,218 @@
-###W
-#import numpy as np
-
 from edugrad.tensor import Tensor
-import edugrad.nn as nn 
-
-#import torch
-
-
-
-def edugrad_test_tensor(t):
-    print("###edugrad_test_tensor###")
-    print(t)
-    print(t.size())
-    print(t.shape()) 
-
-def edugrad_test_funcActivation(t):
-    print("###edugrad_test_funcActivation###")
-    sigmoid = nn.Sigmoid()
-    relu = nn.ReLU()
-    output_sigmoid = sigmoid(t)
-    print(output_sigmoid)
-    output_relu = relu(t) 
-    print(output_relu)
-
-def pytorch_test_funcActivation(t):
-    print("###pytorch_test_funcActivation###")
-    output_sigmoid = torch.sigmoid(t)
-    print(output_sigmoid)
-    output_relu = torch.relu(t) 
-    print(output_relu)
-
-def test_nn():
-    #print("Edugrad:")
-    x = Tensor([[-1.06876432,  1.26828575,  0.67594512], [-1.97010719,  1.5216349,  -0.58012214], [ 0.70961096, -1.73099819, -0.09753269], [-1.07286343,  2.15543405,  0.44647809]])
-    #print("x:", x) 
-    linear = nn.Linear(3, 2)
-    #print("linear:", linear)
-    output_linear = linear(x)
-    #print("output_linear:", output_linear)
-
-    sigmoid = nn.Sigmoid()
-    output_sigmoid = sigmoid(x)
-    #print("output_sigmoid:", output_sigmoid)
-
-    relu = nn.ReLU()
-    output_relu = relu(output_linear)
-    #print("output_relu:", output_relu)
-
-    #print("Pytorch:")
-    x_ = torch.tensor([[-1.06876432,  1.26828575,  0.67594512], [-1.97010719,  1.5216349,  -0.58012214], [ 0.70961096, -1.73099819, -0.09753269], [-1.07286343,  2.15543405,  0.44647809]])
-    #print("x_:", x_) 
-    linear_torch = torch.nn.Linear(3, 2)
-    #print("linear_torch:", linear_torch)
-    output_linear_torch = linear_torch(x_)
-    #print("output_linear_torch:", output_linear_torch)
-
-    sigmoid_torch = torch.nn.Sigmoid()
-    output_sigmoid_torch = sigmoid_torch(x_)
-    #print("output_sigmoid_torch:", output_sigmoid_torch)
-
-    relu_torch = torch.nn.ReLU()
-    output_relu_torch = relu_torch(output_linear_torch)
-    #print("output_relu_torch:", output_relu_torch)
-
-    print("x:", x) 
-    print("x_:", x_) 
-    print("output_linear:", output_linear)
-    print("output_linear_torch:", output_linear_torch)
-    print("sigmoid:",sigmoid)
-    print("sigmoid_torch:",sigmoid_torch)
-    print("output_sigmoid:", output_sigmoid)
-    print("output_sigmoid_torch:", output_sigmoid_torch)
-    print("output_relu:", output_relu)
-    print("output_relu_torch:", output_relu_torch)
-
-#test_nn()
-
-def linear1():
-    input_data = np.random.randn(128, 20)
-    input_tensor = Tensor(input_data)
-    linear_layer = nn.Linear(20, 10)
-    print("linear_layer:", linear_layer)
-    output_tensor = linear_layer(input_tensor)
-    print(output_tensor)
-    print(output_tensor.shape())
-
-    input_torch = torch.randn(128, 20)
-    linear_torch = torch.nn.Linear(20,10)
-    pesos = linear_torch.state_dict()
-    output_torch = linear_torch(input_torch)
-    print(output_torch)
-    print(output_torch.shape)
-
-    print("Pesos Edu:")
-    print(linear_layer.weights.shape())
-    print(linear_layer.weights)
-    print(linear_layer.bias.shape())
-    print(linear_layer.bias)
-    print("Pesos Torch:")
-    print("linear_torch['weight'].shape:", pesos['weight'].shape)
-    print(pesos['weight']) 
-    print("linear_torch['bias'].shape:", pesos['bias'].shape)
-    print(pesos['bias'])  
-
-
-
-#linear1()
-
-##W
+import numpy as np
 from sklearn.datasets import make_regression
 from sklearn.model_selection import train_test_split
-#import matplotlib.pyplot as plt 
-import numpy as np 
+import matplotlib.pyplot as plt
 
-#probando loss con ejemplo de colab V2
-#https://colab.research.google.com/drive/1ytE224UL2HjAnn_D-Alw7QWFm-jI0r-M?authuser=2#scrollTo=e_O8YdmyOg-S
-def test_loss():
-    x, y = make_regression(n_samples=100, n_features=1, noise=10, random_state=0)
-    x = np.interp(x, (x.min(), x.max()), (10, 20))
-    y = np.interp(y, (y.min(), y.max()), (5, 15))
-    xTrain, xTest, yTrain, yTest = train_test_split(x, y, test_size=0.3, random_state=0)    
-    inputs = Tensor(xTrain)
-    #print(inputs.shape()) #(70,1)
-    labels = Tensor(yTrain) #(70,) 
+import edugrad.nn as nn 
+import edugrad.optim as optim
+
+import pandas as pd
+from sklearn.linear_model import SGDRegressor
+
+
+def simple_example():
+    x = Tensor(2.0)
+    y = Tensor(4.0)
+    z = x*y
+    s = z.sigmoid()
+    s.backward()
+    print('s:', s)
+    print('s.grad:', s.grad)
+    print('z.grad:', z.grad)
+    print('x.grad:', x.grad)
+    print('y.grad:', y.grad)
+#simple_example()
+
+
+def rl_Edugrad_1():
+    # Generar datos de regresión
+    x, y = make_regression(n_samples=1000, n_features=1, noise=10, random_state=0) 
+    #n_samples > 100000: in build_topo visited.add(v) RecursionError: maximum recursion depth exceeded while calling a Python object
+    xTrain, xTest, yTrain, yTest = train_test_split(x, y, test_size=0.3, random_state=0)
+
+    # Normalizar datos (Min-Max)
+    def normalize(data):
+        return (data - np.min(data)) / (np.max(data) - np.min(data))
+
+    xTrain_norm = normalize(xTrain)
+    xTest_norm = normalize(xTest)
+    yTrain_norm = normalize(yTrain)
+    yTest_norm = normalize(yTest)
+
+    # Clase para la regresión lineal
+    class LinearRegression:
+        def __init__(self):
+            self.w = Tensor(np.random.randn())  # Peso
+            self.b = Tensor(np.random.randn())  # Sesgo
+
+        def forward(self, x):
+            return x * self.w + self.b
+
+    # Inicializar el modelo y el optimizador
+    model = LinearRegression()
+    optimizer = optim.SGD([model.w, model.b], lr=0.1)
+    epochs = 100 
+    losses = []
+
+    #TODO early stopping
     criterion = nn.MSELoss()
-    loss = criterion(inputs, labels)
-    outputBackwardLoss = loss.backward()
-    #print(inputs.data)
-    print(inputs.grad)
 
-#test_loss() 
+    # Entrenamiento
+    for epoch in range(epochs):
+        epoch += 1
 
+        # Convertir datos a valores de Micrograd
+        inputs = np.array([Tensor(float(i)) for i in xTrain_norm.flatten()])
+        labels = np.array([Tensor(float(i)) for i in yTrain_norm.flatten()])
 
+        # Forward pass
+        predictions = np.array([model.forward(x) for x in inputs])
 
+        # Calcular pérdida
+        #loss = mse_loss(predictions, labels) #original
+        loss = criterion(predictions, labels)
+        losses.append(loss)
 
+        # Backward pass
+        loss.backward()
 
-#v3
-def test_net():
+        # Actualizar parámetros
+        optimizer.step()
 
-    #creacion de datos 
-    x, y = make_regression(n_samples=10, n_features=1, noise=10, random_state=0)
-    
-    x = np.interp(x, (x.min(), x.max()), (10, 20))
-    y = np.interp(y, (y.min(), y.max()), (5, 15))
-    
-    #plt.plot(x, y, '.')
-    #plt.xlabel('Years of experience')
-    #plt.ylabel('Salary per month ($k)')
-    #plt.title('The relationship between experience & salary')
-    #plt.show()
+        print(f'Epoch: {epoch} | Loss: {loss.data}')
 
-    xTrain, xTest, yTrain, yTest = train_test_split(x, y, test_size=0.3, random_state=0)    
-    inputs = Tensor(xTrain)
-    print("inputs:") 
-    print(inputs.shape()) #(7,1)
-    print(inputs) 
-    print("labels:")
-    labels = Tensor(yTrain) 
-    print(labels.shape()) #(7,)
-    print(labels)
+    # Predicción en el conjunto de prueba
+    test_inputs = np.array([Tensor(float(i)) for i in xTest_norm.flatten()])
+    test_predictions = np.array([model.forward(x) for x in test_inputs])
 
-    #modelo
-    class Net():
-      def __init__(self):
-        self.fc1 = nn.Linear(1, 1)
-      def forward(self, x):
-        out = self.fc1(x)
-        return out
-
-    model = Net()
-
-    #entradas y salidas del modelo
-    #print(inputs.size()) #7
-    print("inputs:")
-    print(inputs)
-    outputs = model.forward(inputs) 
-    print("outputs:")
-    print(outputs.shape()) #(7,1)
-    print(outputs)
-
-    #MSELoss
-    print("==MESLoss==") 
-    criterion = nn.MSELoss()
-    outputs = outputs.flatten()
-    #outputs = outputs.reshape(7,1) #todo 
-    labels = labels.flatten()
-    #labels = labels.reshape(7,1) #todo
-    #print(np.size(outputs)) #7
-    print("outputs with flatten():")
-    print(outputs)
-    print("labels with flatten():")
-    print(labels)
-    print("loss:")
-    loss = criterion(outputs, labels)
-    #print(loss.shape())
-    print("MESLoss:")
-    print(loss) #TODO: Value()?
+    print("model.w.data: ",model.w.data) 
+    print("model.b.data:", model.b.data) 
    
-    print("==without Class MSELoss==")    
-    #n1 = labels.size() #TypeError: 'int' object is not callable
-    n = np.size(labels)
-    print("n:", n)
-    ot = np.sum((outputs - labels)**2)/n
-    #print(ot.shape())
-    print("loss:", ot)
-    print("outputs-labels:") 
-    print(outputs-labels) 
+    ## Graficar resultados
+    
+    # Definir los parámetros de la recta
+    m = model.w.data  # Pendiente
+    b = model.b.data  # Intersección en y
 
-    #todo: comparar con Pytorch
+    # Crear valores de x
+    x_ = xTest_norm 
 
-test_net()
+    # Calcular los valores de y según la ecuación de la recta
+    y_ = m * x_ + b
+
+    # Graficar la recta
+    plt.scatter(xTest_norm, yTest_norm, color='orange', label='Datos de prueba')
+    plt.plot(x_, y_, color='red', label=f'y = {m}x + {b}')
+    plt.title('Graficar una Recta')
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.legend()
+    plt.show()
+
+    ##Graficar Losses
+    losses_ = [l.data for l in losses]
+    plt.plot(losses_, color='blue', label='Pérdida (Loss)')
+    plt.title('Pérdida durante el entrenamiento')
+    plt.xlabel('Épocas')
+    plt.ylabel('Pérdida')
+    plt.legend()
+    plt.show()
+
+#rl_Edugrad_1()
+
+
+def rl_Edugrad_2():
+    # dataset: https://archive.ics.uci.edu/dataset/53/iris
+
+    data = pd.read_csv('../datasets/iris/iris.data', header=None)
+    #print(data.head())
+
+    data.columns = ['SepalLength', 'SepalWidth', 'PetalLength', 'PetalWidth', 'Class']
+    X = data['PetalLength'].values.reshape(-1, 1) 
+    y = data['SepalLength']
+
+    # Inicializar el modelo y el optimizador
+    model = nn.Linear()
+    optimizer = optim.SGD([model.w, model.b], lr=0.01)
+    epochs = 1000 
+    losses = []
+    criterion = nn.MSELoss()
+
+    for epoch in range(epochs):
+        epoch += 1
+        # Convertir datos a valores de Micrograd
+        inputs = [Tensor(float(i)) for i in X]
+        labels =[Tensor(float(i)) for i in y]
+
+        # Forward pass
+        predictions = np.array([model.forward(x) for x in inputs])
+        
+        # Calcular pérdida
+        loss = criterion(predictions, labels)
+        losses.append(loss)
+
+        # Backward pass
+        loss.backward()
+
+        # Actualizar parámetros
+        optimizer.step()
+
+        print(f'Epoch: {epoch} | Loss: {loss.data}')
+
+    # Predicciones
+    print("model.w.data: ",model.w.data) 
+    print("model.b.data:", model.b.data) 
+
+    ## Graficar resultados
+
+    # Definir los parámetros de la recta
+    m = model.w.data  # Pendiente
+    b = model.b.data  # Intersección en y
+
+    # Crear valores de x_
+    x_ = X
+
+    # Calcular los valores de y_ según la ecuación de la recta
+    y_ = m * x_ + b    
+
+    # Graficar resultados
+    plt.scatter(X, y, color='blue', label='Datos')
+    plt.plot(x_, y_, color='red', label='Regresión lineal')
+    plt.xlabel('Longitud de los pétalos')
+    plt.ylabel('Longitud de los sépalos')
+    plt.legend()
+    plt.title('Regresión Lineal usando SGDRegressor')
+    plt.show()
+
+#rl_Edugrad_2()
+
+def rl_sklearn_2():
+    data = pd.read_csv('../datasets/iris/iris.data', header=None)
+    #print(data.head())
+
+    data.columns = ['SepalLength', 'SepalWidth', 'PetalLength', 'PetalWidth', 'Class']
+    X = data['PetalLength'].values.reshape(-1, 1) 
+    y = data['SepalLength']
+
+    # Crear el modelo SGDRegressor
+    model = SGDRegressor(max_iter=1000, learning_rate='constant', eta0=0.01)
+
+    # Entrenar el modelo
+    model.fit(X, y)
+
+    # Predicciones
+    y_pred = model.predict(X)
+
+    plt.scatter(X, y, color='blue', label='Datos')
+    plt.plot(X, y_pred, color='red', label='Regresión lineal')
+    plt.xlabel('Longitud de los pétalos')
+    plt.ylabel('Longitud de los sépalos')
+    plt.legend()
+    plt.title('Regresión Lineal usando SGDRegressor')
+    plt.show()
+
+    print(f'Coeficiente: {model.coef_[0]}')
+    print(f'Intersección: {model.intercept_[0]}')
+
+#rl_sklearn_2()
