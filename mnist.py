@@ -82,97 +82,139 @@ def norm_reshape(xTrain, xTest):
 trainImages, testImages = norm_reshape(X_train, X_test) 
 #print(trainImages[0].shape) #(784,)
 
-#TODO: class CrossEntropyLoss
+#convert las etiquetas de clase de un formato de índice a un formato de codificación one-hot
+def to_categorical(y, num_classes=None):
+    # Si no se especifica el número de clases, lo deducimos del máximo en y
+    if num_classes is None:
+        num_classes = np.max(y) + 1  # Sumar 1 porque las clases empiezan en 0
+
+    # Creamos una matriz de ceros con la forma (n_samples, num_classes)
+    one_hot = np.zeros((y.shape[0], num_classes))
+
+    # Establecemos los índices correspondientes a 1
+    one_hot[np.arange(y.shape[0]), y] = 1
+
+    return one_hot
+
+y_train_one_hot = to_categorical(y_train)
+#print(Tensor(y_train_one_hot[0]))
+
+#Analisis del entrenamiento(TODO):
+def calculate_loss(X,Y,W):
+  return -(1/X.shape[0])*np.sum(np.sum(Y*np.log(np.exp(np.matmul(X,W)) / np.sum(np.exp(np.matmul(X,W)),axis=1)[:, None]),axis = 1))
+
+Wb = Tensor(np.random.randn(784,10))# new initialized weights for gradient descent
+batch_size = 32
+steps = 20000
+for step in range(steps): 
+  ri = np.random.permutation(trainImages.shape[0])[:batch_size]
+  Xb, yb = Tensor(trainImages[ri]), Tensor(y_train_one_hot[ri])
+  y_predW = Xb.matmul(Wb) #todo
+  probs = y_predW.softmax() #todo
+  log_probs = probs.log() #todo
+  zb = yb*log_probs
+
+  outb = zb.reduce_sum(axis = 1) #todo
+  finb = -outb.reduce_sum()  #cross entropy loss
+  finb.backward()
+  if step % 1000 == 0:
+    loss = calculate_loss(trainImages,y_train_one_hot,Wb.data) #todo
+    print(f'loss in step {step} is {loss}')
+  Wb.data = Wb.data- 0.01*Wb.grad
+  Wb.grad = 0
+loss = calculate_loss(trainImages,y_train_one_hot,Wb.data)
+print(f'loss in final step {step+1} is {loss}')
+
+
+
+
+
+
+
+
+
+
+#TODO: class CrossEntropyLoss DONE
 #https://machinelearningmastery.com/cross-entropy-for-machine-learning/
 #search others urls
 
-##Logits:
-Wb = np.random.randn(784,10)# new initialized weights for gradient descent
-#(784, 10) where 
-#Wb = [[w11, w12, w13, ..., w1 10],
-#     [w21, w22, w23, ..., w2 10],
-#     ...,
-#     [w7841, w7842, w7843, ..., w78410]]
+def own_CELoss():
+  ##Logits:
+  Wb = np.random.randn(784,10)# new initialized weights for gradient descent
+  #(784, 10) where 
+  #Wb = [[w11, w12, w13, ..., w1 10],
+  #     [w21, w22, w23, ..., w2 10],
+  #     ...,
+  #     [w7841, w7842, w7843, ..., w78410]]
 
-batch_size = 32
-n_imgs = trainImages.shape[0] #60000
-ri = np.random.permutation(n_imgs)[:batch_size] #[first 32 random number between 0 - 59000] 
+  batch_size = 32
+  n_imgs = trainImages.shape[0] #60000
+  ri = np.random.permutation(n_imgs)[:batch_size] #[first 32 random number between 0 - 59000] 
+  '''
+  print(ri) #[.....]
+  print(ri[0])
+  print(trainImages[ri[0]])
+  print("suma matmul 1:")
+  #print(np.matmul(trainImages[ri[0]], Wb))
+  suma1 = sum(np.matmul(trainImages[ri[0]], Wb))
+  print(suma1)
+  '''
 
-'''
-print(ri) #[.....]
-print(ri[0])
-print(trainImages[ri[0]])
-print("suma matmul 1:")
-#print(np.matmul(trainImages[ri[0]], Wb))
-suma1 = sum(np.matmul(trainImages[ri[0]], Wb))
-print(suma1)
-'''
+  '''
+  out = np.matmul(trainImages[ri], Wb)
+  print(out.shape) #32,10
+  print(out)#10 elements
+  print("suma matmul 2:")
+  print(sum(out[0]))
+  '''
 
-'''
-out = np.matmul(trainImages[ri], Wb)
-print(out.shape) #32,10
-print(out)#10 elements
-print("suma matmul 2:")
-print(sum(out[0]))
-'''
+  '''
+  #X = trainImages[ri]  
+  #print(X.shape) #(32, 784)
+ '''
 
-'''
-#Analisis del entrenamiento(TODO):
-#X = trainImages[ri]  
-#print(X.shape) #(32, 784)
-
-ri = np.random.permutation(train_images.shape[0])[:batch_size]
-Xb, yb = Value(train_images[ri]), Value(y_train[ri])
-y_predW = Xb.matmul(Wb)
-probs = y_predW.softmax()
-log_probs = probs.log()
-'''
-
-
-
-#7 oct: continuar con operaciones con 32 imagenes (batch)
-'''
-#trainImages[ri] -> X
-X = trainImages[ri] 
-#Wb -> W
-W = Wb  
-#y_train -> Y
-Y = y_train[:batch_size]
+  #7 oct: continuar con operaciones con 32 imagenes (batch)
+  '''
+  #trainImages[ri] -> X
+  X = trainImages[ri] 
+  #Wb -> W
+  W = Wb  
+  #y_train -> Y
+  Y = y_train[:batch_size]
 
 
-#Logits:
-logits = np.matmul(X, W)
-#print(logits[0]) [...] #10
-#print(logits.shape) # 32,10
+  #Logits:
+  logits = np.matmul(X, W)
+  #print(logits[0]) [...] #10
+  #print(logits.shape) # 32,10
 
-#Softmax:
-## expo logits:
-exp_logits = np.exp(logits)
-softmax_probs = exp_logits / np.sum(exp_logits, axis=1, keepdims=True)
-#print(softmax_probs.shape) # 32,10
-#print(softmax_probs[0]) #[prob1, prob2....] #10
+  #Softmax:
+  ## expo logits:
+  exp_logits = np.exp(logits)
+  softmax_probs = exp_logits / np.sum(exp_logits, axis=1, keepdims=True)
+  #print(softmax_probs.shape) # 32,10
+  #print(softmax_probs[0]) #[prob1, prob2....] #10
 
-## Calcula la pérdida de entropía cruzada
-Y = Y.reshape(-1,1) # OK
-loss_terms = Y * np.log(softmax_probs)
-#print(loss_terms.shape) #32,10
+  ## Calcula la pérdida de entropía cruzada
+  Y = Y.reshape(-1,1) # OK
+  loss_terms = Y * np.log(softmax_probs)
+  #print(loss_terms.shape) #32,10
 
-## Suma para cada muestra
-loss = np.sum(loss_terms, axis=1) 
-#print(loss.shape) # 32,
+  ## Suma para cada muestra
+  loss = np.sum(loss_terms, axis=1) 
+  #print(loss.shape) # 32,
 
-## Promedio de la pérdida
-N = X.shape[0]
-average_loss = -(1 / N) * np.sum(loss) 
-print(average_loss)
-'''
+  ## Promedio de la pérdida
+  N = X.shape[0]
+  average_loss = -(1 / N) * np.sum(loss) 
+  print(average_loss)
+  '''
+  #loss with first 32
+  x = trainImages[:batch_size] 
+  y = y_train[:batch_size]
+  loss = nn.CrossEntropyLoss()
+  output = loss(x, y, Wb)
+  print("Loss:", output)
 
-
-
-#loss with first 32
-x = trainImages[:batch_size] 
-y = y_train[:batch_size]
-loss = nn.CrossEntropyLoss()
-output = loss(x, y, Wb)
-print("Loss:", output)
+#own_CELoss()
 

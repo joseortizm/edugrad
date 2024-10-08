@@ -10,9 +10,6 @@ class MSELoss():
     def __call__(self, y_pred, y_true):
         return self.forward(y_pred, y_true)
 
-    def __repr__(self):
-        return("MSELoss()")
-
 class CrossEntropyLoss():
   def forward(self, X, Y, W):  
     logits = np.matmul(X, W)
@@ -27,8 +24,6 @@ class CrossEntropyLoss():
 
   def __call__(self, X, Y, W):
     return self.forward(X, Y, W)
-
-
 
 class Linear:
     def __init__(self):
