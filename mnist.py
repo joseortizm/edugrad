@@ -115,32 +115,64 @@ print(out)#10 elements
 print("suma matmul 2:")
 print(sum(out[0]))
 '''
-X = trainImages[ri] #revisar si OK
-logits = np.matmul(trainImages[ri], Wb)
 
+'''
+#Analisis del entrenamiento(TODO):
+#X = trainImages[ri]  
+#print(X.shape) #(32, 784)
+
+ri = np.random.permutation(train_images.shape[0])[:batch_size]
+Xb, yb = Value(train_images[ri]), Value(y_train[ri])
+y_predW = Xb.matmul(Wb)
+probs = y_predW.softmax()
+log_probs = probs.log()
+'''
+
+
+
+#7 oct: continuar con operaciones con 32 imagenes (batch)
+'''
+#trainImages[ri] -> X
+X = trainImages[ri] 
+#Wb -> W
+W = Wb  
+#y_train -> Y
+Y = y_train[:batch_size]
+
+
+#Logits:
+logits = np.matmul(X, W)
+#print(logits[0]) [...] #10
+#print(logits.shape) # 32,10
+
+#Softmax:
 ## expo logits:
 exp_logits = np.exp(logits)
-
-##softmax:
 softmax_probs = exp_logits / np.sum(exp_logits, axis=1, keepdims=True)
-#np.exp(np.matmul(X,W)) / np.sum(np.exp(np.matmul(X,W)),axis=1)[:, None] #original
+#print(softmax_probs.shape) # 32,10
+#print(softmax_probs[0]) #[prob1, prob2....] #10
 
 ## Calcula la pérdida de entropía cruzada
-Y = y_train[ri].reshape(-1,1) #revisar si OK
+Y = Y.reshape(-1,1) # OK
 loss_terms = Y * np.log(softmax_probs)
-#Y*np.log(np.exp(np.matmul(X,W)) / np.sum(np.exp(np.matmul(X,W)),axis=1)[:, None]),axis = 1)
+#print(loss_terms.shape) #32,10
 
 ## Suma para cada muestra
-loss = -np.sum(loss_terms, axis=1) 
-#np.sum(Y*np.log(np.exp(np.matmul(X,W)) / np.sum(np.exp(np.matmul(X,W)),axis=1)[:, None]),axis = 1)
+loss = np.sum(loss_terms, axis=1) 
+#print(loss.shape) # 32,
 
 ## Promedio de la pérdida
-average_loss = -(1 / X.shape[0]) * np.sum(loss) 
-#-(1/X.shape[0])*np.sum(np.sum(Y*np.log(np.exp(np.matmul(X,W)) / np.sum(np.exp(np.matmul(X,W)),axis=1)[:, None]),axis = 1))
+N = X.shape[0]
+average_loss = -(1 / N) * np.sum(loss) 
 print(average_loss)
+'''
 
 
 
-#class CrossEntropyLoss():
-#  def __init__():
-#    pass
+#loss with first 32
+x = trainImages[:batch_size] 
+y = y_train[:batch_size]
+loss = nn.CrossEntropyLoss()
+output = loss(x, y, Wb)
+print("Loss:", output)
+

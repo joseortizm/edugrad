@@ -13,6 +13,23 @@ class MSELoss():
     def __repr__(self):
         return("MSELoss()")
 
+class CrossEntropyLoss():
+  def forward(self, X, Y, W):  
+    logits = np.matmul(X, W)
+    exp_logits = np.exp(logits)
+    softmax_probs = exp_logits / np.sum(exp_logits, axis=1, keepdims=True)
+    Y = Y.reshape(-1,1) 
+    loss_terms = Y * np.log(softmax_probs)
+    loss = np.sum(loss_terms, axis=1) 
+    N = X.shape[0]
+    average_loss = -(1 / N) * np.sum(loss) 
+    return average_loss
+
+  def __call__(self, X, Y, W):
+    return self.forward(X, Y, W)
+
+
+
 class Linear:
     def __init__(self):
         self.w = Tensor(np.random.randn()) 
@@ -23,3 +40,5 @@ class Linear:
     
     def __call__(self, x):
         return self.forward(x)
+
+
