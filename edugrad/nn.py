@@ -11,16 +11,18 @@ class MSELoss():
         return self.forward(y_pred, y_true)
 
 class CrossEntropyLoss():
+  # TODO: input with logits (scores) and targets [2,4,1,4] (true class) similar to pytorch https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html
   def forward(self, X, Y, W):  
     logits = np.matmul(X, W)
     exp_logits = np.exp(logits)
-    softmax_probs = exp_logits / np.sum(exp_logits, axis=1, keepdims=True)
-    Y = Y.reshape(-1,1) 
+    softmax_probs = exp_logits / np.sum(exp_logits, axis=1)[:, None]
     loss_terms = Y * np.log(softmax_probs)
     loss = np.sum(loss_terms, axis=1) 
     N = X.shape[0]
-    average_loss = -(1 / N) * np.sum(loss) 
+    average_loss = -(1 / N) * np.sum(loss)
+
     return average_loss
+
 
   def __call__(self, X, Y, W):
     return self.forward(X, Y, W)

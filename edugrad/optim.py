@@ -5,7 +5,6 @@ class SGD:
 
     def step(self):
         for param in self.params:
-            print(param)
             param.data -= self.lr * param.grad
             param.grad = 0  
 

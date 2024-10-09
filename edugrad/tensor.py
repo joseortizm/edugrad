@@ -134,8 +134,6 @@ class Tensor:
 
         return out
 
-
-
     def reduce_sum(self,axis = None):
         # todo x= self.data check, ?integrar con CrossEntropyLoss?
         out = Tensor(np.sum(self.data,axis = axis), (self,), 'REDUCE_SUM')
