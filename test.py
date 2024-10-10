@@ -28,7 +28,7 @@ def simple_example():
 def rl_Edugrad_1():
     # Generar datos de regresión
     x, y = make_regression(n_samples=1000, n_features=1, noise=10, random_state=0) 
-    #n_samples > 100000: in build_topo visited.add(v) RecursionError: maximum recursion depth exceeded while calling a Python object
+    # TODO: n_samples > 100000: in build_topo visited.add(v) RecursionError: maximum recursion depth exceeded while calling a Python object
     xTrain, xTest, yTrain, yTest = train_test_split(x, y, test_size=0.3, random_state=0)
 
     # Normalizar datos (Min-Max)
@@ -40,11 +40,11 @@ def rl_Edugrad_1():
     yTrain_norm = normalize(yTrain)
     yTest_norm = normalize(yTest)
 
-    # Clase para la regresión lineal
+    # Si quisieras crear tu propia clase para la regresión lineal
     class LinearRegression:
         def __init__(self):
-            self.w = Tensor(np.random.randn())  # Peso
-            self.b = Tensor(np.random.randn())  # Sesgo
+            self.w = Tensor(np.random.randn())  
+            self.b = Tensor(np.random.randn())  
 
         def forward(self, x):
             return x * self.w + self.b
@@ -62,7 +62,7 @@ def rl_Edugrad_1():
     for epoch in range(epochs):
         epoch += 1
 
-        # Convertir datos a valores de Micrograd
+        # Convertir datos a valores de eduGrad 
         inputs = np.array([Tensor(float(i)) for i in xTrain_norm.flatten()])
         labels = np.array([Tensor(float(i)) for i in yTrain_norm.flatten()])
 
@@ -70,7 +70,7 @@ def rl_Edugrad_1():
         predictions = np.array([model.forward(x) for x in inputs])
 
         # Calcular pérdida
-        #loss = mse_loss(predictions, labels) #original
+        #loss = mse_loss(predictions, labels) 
         loss = criterion(predictions, labels)
         losses.append(loss)
 
@@ -121,7 +121,7 @@ def rl_Edugrad_1():
 
 #rl_Edugrad_1()
 
-
+# example eduGrad with Iris Dataset 
 def rl_Edugrad_2():
     # dataset: https://archive.ics.uci.edu/dataset/53/iris
 
@@ -187,6 +187,7 @@ def rl_Edugrad_2():
 
 #rl_Edugrad_2()
 
+# example Iris Dataset with sklearn
 def rl_sklearn_2():
     data = pd.read_csv('../datasets/iris/iris.data', header=None)
     #print(data.head())
