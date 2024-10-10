@@ -6,7 +6,8 @@ Deep learning framework for educational purposes designed for beginners in Pytho
 ## Examples
 ### Basic operations
 ```python
-# import edugrad ... go to test.py (rl_Edugrad_2 function)
+from edugrad.tensor import Tensor
+
 x = Tensor(2.0)
 y = Tensor(4.0)
 z = x*y
