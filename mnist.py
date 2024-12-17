@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 
-from edugrad.nn import CrossEntropyLoss
+from edugrad.nn import CrossEntropyLoss 
 from edugrad.tensor import Tensor
 
 from sklearn.metrics import accuracy_score
@@ -80,36 +80,48 @@ y_train_one_hot = to_categorical(y_train)
 Wb = Tensor(np.random.randn(784,10))# new initialized weights for gradient descent
 batch_size = 32
 steps = 20000
-criterion = CrossEntropyLoss()
+criterion = CrossEntropyLoss(reduction='mean') # 
 optimizer = SGD([Wb], lr=0.01)
+
+running_loss = 0.0
+loss_history = []
+
 for step in range(steps): 
   ri = np.random.permutation(trainImages.shape[0])[:batch_size]
   Xb, yb = Tensor(trainImages[ri]), Tensor(y_train_one_hot[ri])
-  y_predW = Xb.matmul(Wb) # TODO check #s para integrarlo en CrossEntropyLoss
-  probs = y_predW.softmax() #
-  log_probs = probs.log() #
-  zb = yb*log_probs
 
-  outb = zb.reduce_sum(axis = 1) #
-  finb = -outb.reduce_sum()  #
-  finb.backward()
-  if step % 1000 == 0:
-    loss = criterion(trainImages, y_train_one_hot, Wb.data) 
-    print(f'loss in step {step} is {loss}')
+  logits = Xb.matmul(Wb)  
+  loss = criterion(logits, yb)  
+  loss.backward() 
+  running_loss += loss.data
   optimizer.step()
+  
+  if step % 1000 == 999:
+    avg_loss = running_loss / 1000  # Dividir por 1000 para obtener el promedio
+    print(f'loss in step {step+1} is {avg_loss}') 
+    loss_history.append(avg_loss)
+    running_loss = 0.0
+print(f'Accuracy con test data es {accuracy_score(np.argmax(np.matmul(testImages,Wb.data),axis = 1),y_test)*100} %')
 
-loss = criterion(trainImages,y_train_one_hot,Wb.data)
-print(f'loss in final step {step+1} is {loss}')
-print(f'accuracy with test data is {accuracy_score(np.argmax(np.matmul(testImages,Wb.data),axis = 1),y_test)*100} %')
+# Graficar perdida
+steps = [i for i in range(1000, 20001, 1000)]
+plt.figure(figsize=(10, 6))
+plt.plot(steps,  loss_history, marker='o', color='b', linestyle='-', markersize=6)
+plt.title('Evolución de la pérdida durante el entrenamiento')
+plt.xlabel('Step')
+plt.ylabel('Pérdida')
+plt.grid(True)
+plt.xticks(ticks=steps, labels=[f'{i//1000}K' for i in steps])
+plt.show()
 
-#Test
+# Test
 def predict(X, W):
     y_pred = X.matmul(W).softmax()  # Calcula las probabilidades
     return np.argmax(y_pred.data, axis=1)  # Clase con mayor probabilidad
 
 y_test_pred = predict(Tensor(testImages), Wb)
 
-#Plot
+# Plot
 num_images = random.sample(range(10000), 10)
 plt.figure(figsize=(15, 10))
 position = 0
@@ -120,4 +132,3 @@ for position, index in enumerate(num_images):
     plt.subplots_adjust(bottom=.01, top=.95, hspace= 0.1)
     plt.axis('off')    
 plt.show()
-

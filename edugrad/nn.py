@@ -11,20 +11,25 @@ class MSELoss():
         return self.forward(y_pred, y_true)
 
 class CrossEntropyLoss():
-  # TODO: input with logits (scores) and targets [2,4,1,4] (true class) similar to pytorch https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html
-    def forward(self, X, Y, W):  
-        logits = np.matmul(X, W)
-        exp_logits = np.exp(logits)
-        softmax_probs = exp_logits / np.sum(exp_logits, axis=1)[:, None]
-        loss_terms = Y * np.log(softmax_probs)
-        loss = np.sum(loss_terms, axis=1) 
-        N = X.shape[0]
-        average_loss = -(1 / N) * np.sum(loss)
+    def __init__(self, reduction='mean'):
+        if reduction not in ['sum', 'mean']:
+            raise ValueError(f"Tipo invalido: {reduction}. Usa 'sum' o 'mean'.")
+        self.reduction = reduction
 
-        return average_loss
-
-    def __call__(self, X, Y, W):
-        return self.forward(X, Y, W)
+    def forward(self, logits, targets):
+        probs = logits.softmax()
+        log_probs = probs.log()
+        losses = targets * log_probs  # Shape: (batch_size, num_classes)
+        # Reducir por clase para obtener perdidas individuales
+        instance_losses = -losses.reduce_sum(axis=1)  # Shape: (batch_size,)
+        # Aplicar la reducción seleccionada
+        if self.reduction == 'sum':
+            return instance_losses.reduce_sum()  
+        elif self.reduction == 'mean':
+            return instance_losses.reduce_sum() / instance_losses.data.shape[0] 
+    
+    def __call__(self, logits, targets):
+        return self.forward(logits, targets)
 
 class Linear:
     # TODO: init weights and bias with Xavier
@@ -37,5 +42,4 @@ class Linear:
     
     def __call__(self, x):
         return self.forward(x)
-
 
