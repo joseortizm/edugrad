@@ -3,12 +3,20 @@ import math
 import numpy as np
 
 class Tensor:
+    """
+    Args:
+        data: valor del nodo 
+        grad: gradiente del nodo
+        _backward: funcion lambda para realizar backward()
+        _prev: nodos previos. Si esta vacio imprime 'set()'
+        _op: nombre de la operacion que se realizo para crear este nodo
+    """
     def __init__(self, data, _children=(), _op=''):
         self.data = data
         self.grad = 0
-        self._backward = lambda: None
-        self._prev = set(_children)
-        self._op = _op # the op that produced this node, for graphviz / debugging / etc
+        self._backward = lambda: None 
+        self._prev = set(_children) 
+        self._op = _op 
 
     def __add__(self, other):
         other = other if isinstance(other, Tensor) else Tensor(other)
@@ -18,7 +26,6 @@ class Tensor:
             self.grad += out.grad
             other.grad += out.grad
         out._backward = _backward
-
         return out
 
     def __mul__(self, other):
@@ -29,7 +36,6 @@ class Tensor:
             self.grad += other.data * out.grad
             other.grad += self.data * out.grad
         out._backward = _backward
-
         return out
 
     def __pow__(self, other):
@@ -39,7 +45,6 @@ class Tensor:
         def _backward():
             self.grad += (other * self.data**(other-1)) * out.grad
         out._backward = _backward
-
         return out
 
     def relu(self):
@@ -48,7 +53,6 @@ class Tensor:
         def _backward():
             self.grad += (out.data > 0) * out.grad
         out._backward = _backward
-
         return out
     
     def tanh(self):
@@ -59,7 +63,6 @@ class Tensor:
         def _backward():
           self.grad = (1 - t**2)*out.grad
         out._backward = _backward
-    
         return out
 
     def sigmoid(self):
@@ -70,7 +73,6 @@ class Tensor:
         def _backward():            
             self.grad = (t*(1-t))*out.grad
         out._backward = _backward
-
         return out
 
     def exp(self):
@@ -80,7 +82,6 @@ class Tensor:
       def _backward():
         self.grad += out.data * out.grad  
       out._backward = _backward
-    
       return out
 
     def shape(self):
@@ -109,7 +110,6 @@ class Tensor:
             self.grad += np.dot(out.grad,other.data.T)
             other.grad += np.dot(self.data.T,out.grad)
         out._backward = _backward
-
         return out
 
     def softmax(self):
@@ -122,7 +122,6 @@ class Tensor:
             [-1, 1]
               )) * softmax
         out._backward = _backward
-
         return out
 
     def log(self):
@@ -131,7 +130,6 @@ class Tensor:
         def _backward():
             self.grad += out.grad/self.data
         out._backward = _backward
-
         return out
 
     def reduce_sum(self,axis = None):
@@ -145,7 +143,6 @@ class Tensor:
             self.grad += np.tile(grad, tile_scaling)
 
         out._backward = _backward
-
         return out
 
     def backward(self):

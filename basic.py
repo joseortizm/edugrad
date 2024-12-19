@@ -37,6 +37,11 @@ print('w1.grad:', w1.grad)
 print('x2.grad:', x2.grad)
 print('w2.grad:', w2.grad)
 
+# Imprimir caracteristicas de los nodos
+#print(o.data)  # Imprime el resultado al obtener el nodo o (es decir el valor de o)
+#print(o._prev)  # Imprime el nodo ó los nodos previos de o: en este caso es el nodo n (su valor y gradiente)
+#print(o._op)    # Imprime 'tanh' (la operación que creó este nodo)
+
 
 
 
