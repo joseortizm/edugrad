@@ -42,6 +42,3 @@ print('w2.grad:', w2.grad)
 #print(o._prev)  # Imprime el nodo ó los nodos previos de o: en este caso es el nodo n (su valor y gradiente)
 #print(o._op)    # Imprime 'tanh' (la operación que creó este nodo)
 
-
-
-

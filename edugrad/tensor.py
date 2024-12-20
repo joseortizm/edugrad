@@ -4,6 +4,10 @@ import numpy as np
 
 class Tensor:
     """
+    Esta clase representa un valor en una red neuronal. Guarda tanto el resultado de 
+    las operaciones realizadas como los gradientes que se usan para ajustar los 
+    parámetros del modelo durante el entrenamiento.
+
     Args:
         data: valor del nodo 
         grad: gradiente del nodo
