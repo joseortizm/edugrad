@@ -44,12 +44,12 @@ for epoch in range(epochs):
 ```
 
 ## TODOs
-- Improve the CrossEntropyLoss class
 - Implement an example with a Multilayer Perceptron
 - Implement the Adam optimizer
 - Implement a Transformer architecture with an example of translation
 - Implement a Convolutional Neural Networks architecture
 - Create documentation for students and beginners
+- Anything that can help make Edugrad a better educational tool
 
 
 
