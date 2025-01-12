@@ -141,7 +141,7 @@ def rl_Edugrad_2():
 
     for epoch in range(epochs):
         epoch += 1
-        # Convertir datos a valores de Micrograd
+        # Convertir datos a valores de Edugrad
         inputs = [Tensor(float(i)) for i in X]
         labels =[Tensor(float(i)) for i in y]
 
