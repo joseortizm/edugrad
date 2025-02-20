@@ -3,6 +3,8 @@
 
 Deep learning framework for educational purposes designed for beginners in Python and deep learning. Inspired by [PyTorch](https://github.com/pytorch/pytorch), [Micrograd](https://github.com/karpathy/micrograd) and [Tinygrad](https://github.com/tinygrad/tinygrad).
 
+[Documentación oficial](https://joseortizm.github.io/edugrad-website/docs/index.html)
+
 ## Examples
 ### Basic operations
 ```python
@@ -49,7 +51,7 @@ for epoch in range(epochs):
 - Implement a Transformer architecture with an example of translation
 - Implement a Convolutional Neural Networks architecture
 - Create documentation for students and beginners
-- Anything that can help make Edugrad a better educational tool
+- Anything that can help make eduGrad a better educational tool
 
 
 
