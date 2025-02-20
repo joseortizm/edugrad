@@ -3,7 +3,7 @@
 
 Deep learning framework for educational purposes designed for beginners in Python and deep learning. Inspired by [PyTorch](https://github.com/pytorch/pytorch), [Micrograd](https://github.com/karpathy/micrograd) and [Tinygrad](https://github.com/tinygrad/tinygrad).
 
-[Documentación oficial](https://joseortizm.github.io/edugrad-website/docs/index.html)
+[Official Documentation](https://joseortizm.github.io/edugrad-website/docs/index.html)
 
 ## Examples
 ### Basic operations
@@ -22,7 +22,8 @@ print('x.grad:', x.grad)
 ```
 ### Iris Dataset
 ```python
-# import edugrad ... go to test.py (rl_Edugrad_2 function)
+# import edugrad ...
+# ... code ... go to test.py (rl_Edugrad_2 function)
 model = nn.Linear()
 optimizer = optim.SGD([model.w, model.b], lr=0.01)
 epochs = 1000 
